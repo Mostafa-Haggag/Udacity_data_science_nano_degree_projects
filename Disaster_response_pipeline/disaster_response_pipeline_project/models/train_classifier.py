@@ -1,25 +1,99 @@
 import sys
+import nltk
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
+import os
+import re
+from scipy.stats import gmean
+import pickle
 
+from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.model_selection import train_test_split ,GridSearchCV
+from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
+from sklearn.base import BaseEstimator,TransformerMixin
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, AdaBoostClassifier
+from sklearn.metrics import confusion_matrix,classification_report,fbeta_score, make_scorer
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from sklearn.multioutput import MultiOutputClassifier
 
+class StartingVerbExtractor(BaseEstimator, TransformerMixin):
+    """
+    Starting Verb Extractor class
+    
+    This class extract the starting verb of a sentence,
+    creating a new feature for the ML classifier
+    """
+
+    def starting_verb(self, text):
+        sentence_list = nltk.sent_tokenize(text)
+        for sentence in sentence_list:
+            pos_tags = nltk.pos_tag(tokenize(sentence))
+            first_word, first_tag = pos_tags[0]
+            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
+                return True
+        return False
+
+    # Given it is a tranformer we can return the self 
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X_tagged = pd.Series(X).apply(self.starting_verb)
+        return pd.DataFrame(X_tagged)
+    
 def load_data(database_filepath):
-    pass
-
+    engine = create_engine('sqlite:///' + database_filepath)
+    table_name = os.path.basename(database_filepath).replace(".db","") + "_table"
+    df = pd.read_sql_table(table_name,engine)
+    X = df['message']
+    Y = df.iloc[:,4:]
+    category_names = Y.columns
+    return X,Y,category_names
 
 def tokenize(text):
-    pass
+    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    detected_urls = re.findall(url_regex, text)
+    for detected_url in detected_urls:
+        text = text.replace(detected_url, "urlplaceholder")
+    tokens = nltk.word_tokenize(text)
+    lemmatizer = nltk.WordNetLemmatizer()
+    clean_tokens = [lemmatizer.lemmatize(w).lower().strip() for w in tokens]
+    return clean_tokens
 
 
 def build_model():
-    pass
+    pipeline0 = Pipeline([
+        ('features', FeatureUnion([
+
+            ('text_pipeline', Pipeline([
+                ('vect', CountVectorizer(tokenizer=tokenize)),
+                ('tfidf', TfidfTransformer())
+            ])),
+
+            ('starting_verb', StartingVerbExtractor())
+        ])),
+
+        ('classifier', MultiOutputClassifier(AdaBoostClassifier()))
+    ])
+
+    parameters_grid = {'classifier__estimator__learning_rate': [0.01, 0.02, 0.05],
+              'classifier__estimator__n_estimators': [10, 20, 40]}
+    cv = GridSearchCV(pipeline0, param_grid=parameters_grid, scoring='f1_micro', n_jobs=-1)
+    return cv
+
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    y_pred = model.predict(X_test)
+    print(classification_report(y_pred, Y_test.values, target_names=category_names))
+    print('Accuracy Score: {}'.format(np.mean(Y_test.values == y_pred)))
 
 
 def save_model(model, model_filepath):
-    pass
-
+   with open(model_filepath, 'wb') as f:
+        pickle.dump(model, f)
 
 def main():
     if len(sys.argv) == 3:

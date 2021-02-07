@@ -1,18 +1,36 @@
 import sys
-
+import pandas as pd
+import numpy as np
+import os
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
-    pass
-
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    df = messages.merge(categories,how='inner',on=['id'])
+    return df
 
 def clean_data(df):
-    pass
-
-
+    categories = df["categories"].str.split(';',expand=True)
+    row = categories.iloc[[1]]
+    category_colnames = [category_name.split('-')[0] for category_name in row.values[0]]
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] =  categories[column].astype(str).str[-1:]
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+    categories.columns = category_colnames
+    df = pd.concat([df,categories], join='inner', axis=1)
+    df.drop(['categories'], axis=1, inplace=True)
+    df = df.drop(['child_alone'],axis = 1)
+    df.drop_duplicates(inplace=True)
+    df['related']=df['related'].map(lambda x: 0 if x == 2 else x)
+    print('Duplicates remaining:', df.duplicated().sum())
+    return df
 def save_data(df, database_filename):
-    pass  
-
-
+    engine = create_engine('sqlite:///' + database_filename)
+    table_name = os.path.basename(database_filename).replace(".db","") + "_table"
+    df.to_sql(table_name, engine, index=False, if_exists='replace')
 def main():
     if len(sys.argv) == 4:
 
