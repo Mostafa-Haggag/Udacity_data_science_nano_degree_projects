@@ -1,0 +1,83 @@
+def get_top_articles(n, df=df):
+    '''
+    INPUT:
+    n - (int) the number of top articles to return
+    df - (pandas dataframe) df as defined at the top of the notebook 
+    
+    OUTPUT:
+    top_articles - (list) A list of the top 'n' article titles 
+    
+    '''
+ return the topic articles titles from the df 
+ ------------
+ def get_top_article_ids(n, df=df):
+    '''
+    INPUT:
+    n - (int) the number of top articles to return
+    df - (pandas dataframe) df as defined at the top of the notebook 
+    
+    OUTPUT:
+    top_articles - (list) A list of the top 'n' article titles 
+    
+    '''
+    return top articles idds
+    ----------------------------
+    def create_user_item_matrix(df):
+    '''
+    INPUT:
+    df - pandas dataframe with article_id, title, user_id columns
+    
+    OUTPUT:
+    user_item - user item matrix 
+    
+    Description:
+    Return a matrix with user ids as rows and article ids on the columns with 1 values where a user interacted with 
+    an article and a 0 otherwise
+    '''
+   ba3mel array of the users and the arictles w w ba7ot 1 fi kol column li arictle shafo the user
+   -----------------------
+   def find_similar_users(user_id, user_item=user_item):
+    '''
+    INPUT:
+    user_id - (int) a user_id
+    user_item - (pandas dataframe) matrix of users by articles: 
+                1's when a user has interacted with an article, 0 otherwise
+    
+    OUTPUT:
+    similar_users - (list) an ordered list where the closest users (largest dot product users)
+                    are listed first
+    
+    Description:
+    Computes the similarity of every pair of users based on the dot product
+    Returns an ordered
+    
+    '''
+    I am calucating the dot product for a specific user
+    -----------------
+    def get_article_names(article_ids, df=df):
+    '''
+    INPUT:
+    article_ids - (list) a list of article ids
+    df - (pandas dataframe) df as defined at the top of the notebook
+    
+    OUTPUT:
+    article_names - (list) a list of article names associated with the list of article ids 
+                    (this is identified by the title column)
+    '''
+    i am checked lw list of article ids are avialbe w ba returne their associaited names
+    ------------------
+    def get_user_articles(user_id, user_item=user_item):
+    '''
+    INPUT:
+    user_id - (int) a user id
+    user_item - (pandas dataframe) matrix of users by articles: 
+                1's when a user has interacted with an article, 0 otherwise
+    
+    OUTPUT:
+    article_ids - (list) a list of the article ids seen by the user
+    article_names - (list) a list of article names associated with the list of article ids 
+                    (this is identified by the doc_full_name column in df_content)
+    
+    Description:
+    Provides a list of the article_ids and article titles that have been seen by a user
+    i get a list column heya article w rows users. i return back 
