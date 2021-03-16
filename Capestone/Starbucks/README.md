@@ -4,15 +4,8 @@ Project in Data Scientist Nanodegree of Udacity
 
 It is the Starbuck's Capstone Challenge of the Data Scientist Nanodegree in Udacity. We get the dataset from the program that creates the data simulates how people make purchasing decisions and how those decisions are influenced by promotional offers. We want to make a recommendation engine that recommends Starbucks which offer should be sent to a particular customer.
 
-We are interested to answer the following two questions:
-1. Which offer should be sent to a particular customer to let the customer buy more?
-2. Which demographic groups respond best to which offer type?
-## File Descriptions 
-    Which offer should be sent to a particular customer to let the customer buy more?
-    Which demographic groups respond best to which offer type?
-The notebook available here showcases work related to the above questions.  
-
-
+We are interested to answer the following question:
+1. are we able to predict what is the best offer type based on a specific user information?
 
 The data is contained in three files:
 - `portfolio.json` - containing offer ids and meta data about each offer (duration, type, etc.)
