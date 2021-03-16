@@ -38,3 +38,4 @@ Here is the schema and explanation of each variable in the files:
 
 The main findings of the code can be found at the post available https://mostafahaggag.medium.com/the-effect-of-starbucks-offers-on-customer-purchase-2e3008a5f820
 
+the git hub link is https://github.com/Mostafa-Haggag/Udacity_data_science_nano_degree_projects/tree/main/Capestone/Starbucks
