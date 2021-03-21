@@ -1,5 +1,9 @@
 # Disaster Response Pipelines
 
+# Motivation
+
+Partners in figure eight are providing a label tweets and text message from real life disasters, I am trying to prepair the data with etl piple line and make  a supervised learning model. We are trying to following a disaster as we recieve million of message during a disaster. we trying to classfy each message to fall which organigze needs to deal with this message.
+
 All libraries are available in Anaconda distribution of Python. The used libraries are:
 
 pandas

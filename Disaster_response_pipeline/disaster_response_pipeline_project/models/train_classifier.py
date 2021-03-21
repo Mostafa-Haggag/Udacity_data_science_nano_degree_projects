@@ -19,13 +19,6 @@ from nltk.tokenize import word_tokenize
 from sklearn.multioutput import MultiOutputClassifier
 
 class StartingVerbExtractor(BaseEstimator, TransformerMixin):
-    """
-    Starting Verb Extractor class
-    
-    This class extract the starting verb of a sentence,
-    creating a new feature for the ML classifier
-    """
-
     def starting_verb(self, text):
         sentence_list = nltk.sent_tokenize(text)
         for sentence in sentence_list:
@@ -44,6 +37,16 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         return pd.DataFrame(X_tagged)
     
 def load_data(database_filepath):
+"""
+Description of the function:
+load the data cleaned data
+Parameters:
+database_filepath this the path of the cleaned data
+Returns:
+X message
+Y 
+category_names columns
+"""
     engine = create_engine('sqlite:///' + database_filepath)
     table_name = os.path.basename(database_filepath).replace(".db","") + "_table"
     df = pd.read_sql_table(table_name,engine)
@@ -53,6 +56,14 @@ def load_data(database_filepath):
     return X,Y,category_names
 
 def tokenize(text):
+"""
+Description of the function:
+this takes the texts message and tokanize it
+Parameters:
+text the message
+Returns:
+for reach message i return the toknized messages
+"""
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     detected_urls = re.findall(url_regex, text)
     for detected_url in detected_urls:
@@ -64,6 +75,14 @@ def tokenize(text):
 
 
 def build_model():
+"""
+Description of the function:
+The pipeline
+Parameters:
+No input
+Returns:
+The optimized parameters for this pipeline
+"""
     pipeline0 = Pipeline([
         ('features', FeatureUnion([
 
@@ -86,12 +105,32 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+"""
+Description of the function:
+This evalute the model
+Parameters:
+model the trianed optimized model
+x_test x test category
+y_test the labels
+category_names
+Returns:
+nothing
+"""
     y_pred = model.predict(X_test)
     print(classification_report(y_pred, Y_test.values, target_names=category_names))
     print('Accuracy Score: {}'.format(np.mean(Y_test.values == y_pred)))
 
 
 def save_model(model, model_filepath):
+"""
+Description of the function:
+
+Parameters:.
+model the model
+model_filepath the path we want to save the model
+Returns:
+
+"""
    with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 

@@ -5,12 +5,31 @@ import os
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+"""
+Description of the function:
+Load the data from csv to data frame
+Parameters:
+messages_filepath The path of the message csv
+categories_filepath the path of the cateogire ccsv
+Returns:
+df return a merger data frame of both merging ID
+"""
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = messages.merge(categories,how='inner',on=['id'])
     return df
 
 def clean_data(df):
+"""
+Description of the function:
+Takes the data frame and clean it by checking for nulls and dupplicates
+Parameters:
+df takes as an input the main data frame
+
+Returns:
+df return the cleaned data frame
+
+"""
     categories = df["categories"].str.split(';',expand=True)
     row = categories.iloc[[1]]
     category_colnames = [category_name.split('-')[0] for category_name in row.values[0]]
@@ -28,6 +47,16 @@ def clean_data(df):
     print('Duplicates remaining:', df.duplicated().sum())
     return df
 def save_data(df, database_filename):
+"""
+Description of the function:
+saving the data after it wa cleaned
+Parameters:
+df data frame
+database_file name the new name of the data frame that we will save as
+Returns:
+no return
+
+"""
     engine = create_engine('sqlite:///' + database_filename)
     table_name = os.path.basename(database_filename).replace(".db","") + "_table"
     df.to_sql(table_name, engine, index=False, if_exists='replace')
